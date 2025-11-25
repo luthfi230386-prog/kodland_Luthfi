@@ -1,16 +1,137 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<!doctype html>
-<html>
-  <head><meta charset="utf-8"><title>Dashboard</title><link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"></head>
-  <body>
-    <h2>Welcome, {{ user['display'] }}</h2>
-    <p>Your total score: {{ user['score'] }}</p>
-    <p><a href="{{ url_for('quiz_start') }}">Take Quiz</a></p>
-    <p><a href="{{ url_for('leaderboard') }}">Leaderboard</a></p>
-    <p><a href="{{ url_for('logout') }}">Logout</a></p>
-  </body>
-</html>
+<style>
+
+.dashboard-bg {
+  padding: 30px 0;
+  min-height: 70vh;
+  background: radial-gradient(circle at 20% 30%, #ff66cc, #8f3dff, #2d1b69);
+  background-size: 250% 250%;
+  animation: bgflow 16s ease infinite;
+  border-radius: 20px;
+  position: relative;
+}
+
+@keyframes bgflow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.dashboard-card {
+  max-width: 600px;
+  margin: auto;
+  padding: 30px 35px;
+  background: rgba(25, 5, 40, 0.55);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 18px rgba(255,0,255,0.35);
+  animation: fadeUp 1s ease forwards;
+  transform: translateY(20px);
+  opacity: 0;
+}
+
+@keyframes fadeUp {
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.dashboard-title {
+  color: #ffb3ff;
+  font-size: 32px;
+  text-align: center;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(255,0,240,0.6);
+  margin-bottom: 20px;
+}
+
+.score-box {
+  font-size: 22px;
+  text-align: center;
+  padding: 15px;
+  color: #ffdfff;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  margin-bottom: 25px;
+  box-shadow: 0 0 10px rgba(255,0,255,0.2);
+}
+
+.dashboard-links a {
+  display: block;
+  margin: 12px 0;
+  font-size: 18px;
+  padding: 12px;
+  text-align: center;
+  border-radius: 12px;
+  color: white;
+  background: linear-gradient(90deg, #ff66cc, #b76bff);
+  text-decoration: none;
+  transition: 0.25s;
+  box-shadow: 0 0 12px rgba(255,0,255,0.3);
+}
+
+.dashboard-links a:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255,0,255,0.55);
+}
+
+.star {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: rgba(255,180,255,0.9);
+  border-radius: 50%;
+  filter: blur(1px);
+  animation: starFloat linear infinite;
+  pointer-events: none;
+}
+
+@keyframes starFloat {
+  from { transform: translateY(50px); opacity: 1; }
+  to   { transform: translateY(-60px); opacity: 0; }
+}
+
+
+@keyframes scanMove {
+  0% { background-position-y: 0; }
+  100% { background-position-y: 200px; }
+}
+
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const area = document.querySelector(".dashboard-bg");
+  for (let i = 0; i < 35; i++) {
+    let s = document.createElement("div");
+    s.className = "star";
+    s.style.left = Math.random() * 100 + "%";
+    s.style.top = (Math.random() * 100 + 20) + "px";
+    s.style.animationDuration = (4 + Math.random() * 8) + "s";
+    s.style.opacity = Math.random();
+    area.appendChild(s);
+  }
+});
+</script>
+
+<div class="dashboard-bg">
+
+  <div class="dashboard-card">
+
+    <h2 class="dashboard-title">Welcome, {{ user['display'] }}</h2>
+
+    <div class="score-box">
+      Total Score: <strong>{{ user['score'] }}</strong>
+    </div>
+
+    <div class="dashboard-links">
+      <a href="{{ url_for('quiz_start') }}">🚀 Take Quiz</a>
+      <a href="{{ url_for('leaderboard') }}">🌟 Leaderboard</a>
+      <a href="{{ url_for('logout') }}">🔒 Logout</a>
+    </div>
+
+  </div>
+
+</div>
 
 {% endblock %}

@@ -1,40 +1,278 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Quiz Home</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  </head>
-  <body>
-    <header>
-      <h1>Quiz for Python Course</h1>
-      <nav>
-        <a href="{{ url_for('index') }}">Home</a> |
-        <a href="{{ url_for('leaderboard') }}">Leaderboard</a> |
-        {% if session.get('user_id') %}
-          <a href="{{ url_for('dashboard') }}">Dashboard</a> |
-          <a href="{{ url_for('logout') }}">Logout</a>
-        {% else %}
-          <a href="{{ url_for('login') }}">Login</a> |
-          <a href="{{ url_for('register') }}">Register</a>
-        {% endif %}
-      </nav>
-    </header>
-    <main>
-      <p>Welcome! This site contains quizzes about topics such as AI, NLP, Computer Vision, and Python ML.</p>
-      <p><a href="{{ url_for('quiz_start') }}">Start Quiz</a></p>
-      <section id="weather">
-        <h3>Weather widget (example)</h3>
-        <p>Note: weather fetch in this demo uses Open-Meteo API; replace with any API or remove.</p>
-      </section>
-    </main>
-    <footer>
-      <p>Developed @Luthfi</p>
-    </footer>
-  </body>
-</html>
+<style>
+:root {
+  --sky1: #A7FFEB;
+  --sky2: #00BCD4;
+  --ocean: #01579B;
+  --sun: #FFD54F;
+  --text: #003344;
+  --card: #ffffffee;
+}
+body {
+  background: linear-gradient(to bottom, var(--sky1), var(--sky2)) !important;
+  transition: background 1.5s ease;
+}
+.cloud {
+  position: fixed;
+  background: #fff;
+  border-radius: 50%;
+  opacity: 0.85;
+  animation: floatCloud linear infinite;
+  z-index: -1;
+}
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+}
+.cloud1 {
+  width: 100px; height: 60px;
+  top: 80px; left: -150px;
+  animation-duration: 60s;
+}
+.cloud1::before { width: 60px; height: 60px; top: -20px; left: 20px; }
+.cloud1::after  { width: 80px; height: 50px; top: 10px;  left: 50px; }
+.cloud2 {
+  width: 140px; height: 80px;
+  top: 200px; left: -220px;
+  animation-duration: 80s;
+  opacity: 0.7;
+}
+.cloud2::before { width: 90px; height: 70px; top: -25px; left: 30px; }
+.cloud2::after  { width: 100px; height: 60px; top: 20px; left: 60px; }
+@keyframes floatCloud {
+  from { transform: translateX(0); }
+  to   { transform: translateX(120vw); }
+}
+.sun {
+  position: fixed;
+  top: 40px;
+  right: 80px;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, var(--sun), #FFC107);
+  border-radius: 50%;
+  box-shadow: 0 0 40px 10px rgba(255,213,79,0.6);
+  animation: glow 3s infinite alternate;
+  transition: opacity 1.5s, transform 1.5s;
+  z-index: -1;
+}
+@keyframes glow {
+  from { transform: scale(1); opacity: .9; }
+  to   { transform: scale(1.1); opacity: 1; }
+}
+#moon {
+  position: fixed;
+  top: 60px;
+  right: 120px;
+  width: 70px;
+  height: 70px;
+  background: radial-gradient(circle at 30% 30%, #fff, #ccc);
+  border-radius: 50%;
+  box-shadow: 0 0 25px rgba(255,255,255,0.5);
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  z-index: -1;
+}
+.rain {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  display: none;
+  z-index: -1;
+}
+.drop {
+  position: absolute;
+  width: 2px; height: 15px;
+  background: rgba(255,255,255,0.8);
+  bottom: 100%;
+  animation: fall linear infinite;
+}
+@keyframes fall {
+  to { transform: translateY(110vh); }
+}
+.weather-container {
+  background: rgba(255, 255, 255, 0.034);
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+  z-index: 10;
+  position: relative;
+}
+.weather-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.weather-form input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+}
+.weather-form button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+}
+.weather-form button:hover {
+  background:#0056c7;
+}
+.weather-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.weather-table th, .weather-table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+.fade-in {
+  animation: fadeIn 1s ease forwards;
+}
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+</style>
+
+<div class="sun"></div>
+<div id="moon"></div>
+<div class="cloud cloud1"></div>
+<div class="cloud cloud2"></div>
+<div class="rain" id="rain"></div>
+
+<main class="fade-in">
+<section id="weather" class="weather-container">
+
+<h2>Weather Forecast</h2>
+
+<form method="get" class="weather-form">
+  <input type="text" name="city" placeholder="Enter city name..."
+         value="{{ request.args.get('city', 'Jakarta') }}">
+  <button type="submit">Check Weather</button>
+</form>
+
+{% if weather_3day %}
+{% if weather_3day.error %}
+<p class="error">{{ weather_3day.error }}</p>
+{% else %}
+
+<h3 class="city-title">{{ weather_3day.city }}</h3>
+
+<table class="weather-table fade-in">
+<thead>
+<tr>
+  <th>Date</th>
+  <th>Day</th>
+  <th>Day Temp</th>
+  <th>Night Temp</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+{% for day in weather_3day.days %}
+<tr>
+  <td>{{ day.date }}</td>
+  <td>{{ day.day_name }}</td>
+  <td>{{ day.temp_day }}°C</td>
+  <td>{{ day.temp_night }}°C</td>
+  <td>{{ day.desc }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<script>
+const sun = document.querySelector('.sun');
+const moon = document.getElementById('moon');
+const rainContainer = document.getElementById('rain');
+const clouds = document.querySelectorAll('.cloud');
+const offset = parseInt("{{ weather_3day.time_offset | default(0) }}");
+
+function createRain() {
+  rainContainer.innerHTML = '';
+  for (let i=0; i<60; i++) {
+    const d = document.createElement('div');
+    d.classList.add('drop');
+    d.style.left = Math.random()*100 + 'vw';
+    d.style.animationDuration = 0.8 + Math.random()*0.8 + 's';
+    d.style.animationDelay = Math.random()*2 + 's';
+    rainContainer.appendChild(d);
+  }
+}
+
+function setWeather(t) {
+  if (t === 'clear') {
+    document.body.style.background = 'linear-gradient(to bottom, #A7FFEB, #00BCD4)';
+    rainContainer.style.display = 'none';
+    clouds.forEach(c => c.style.animationDuration = '60s');
+  }
+  else if (t === 'rain') {
+    document.body.style.background = 'linear-gradient(to bottom, #80DEEA, #4DD0E1)';
+    createRain();
+    rainContainer.style.display = 'block';
+    clouds.forEach(c => c.style.animationDuration = '90s');
+  }
+  else if (t === 'windy') {
+    document.body.style.background = 'linear-gradient(to bottom, #B3E5FC, #81D4FA)';
+    rainContainer.style.display = 'none';
+    clouds.forEach(c => c.style.animationDuration = '25s');
+  }
+}
+
+function applyWeatherFromAPI(desc) {
+  desc = desc.toLowerCase();
+  if (desc.includes('rain')) setWeather('rain');
+  else if (desc.includes('wind')) setWeather('windy');
+  else setWeather('clear');
+}
+
+function getCityHour() {
+  const utc = new Date().getUTCHours();
+  const h = utc + offset/3600;
+  return (h + 24) % 24;
+}
+
+function applyTimeTheme() {
+  const hour = getCityHour();
+  if (hour >= 5 && hour < 11) {
+    document.body.style.background = 'linear-gradient(to bottom, #FFF9C4, #FFE082)';
+    sun.style.opacity = '1';
+    moon.style.opacity = '0';
+  }
+  else if (hour >= 11 && hour < 16) {
+    document.body.style.background = 'linear-gradient(to bottom, #A7FFEB, #00BCD4)';
+    sun.style.opacity = '1';
+    moon.style.opacity = '0';
+  }
+  else if (hour >= 16 && hour < 19) {
+    document.body.style.background = 'linear-gradient(to bottom, #FFCC80, #FB8C00)';
+    sun.style.opacity = '0.9';
+    moon.style.opacity = '0';
+  }
+  else {
+    document.body.style.background = 'linear-gradient(to bottom, #0D47A1, #1A237E)';
+    sun.style.opacity = '0';
+    moon.style.opacity = '1';
+  }
+}
+
+applyTimeTheme();
+applyWeatherFromAPI(`{{ weather_3day.days[0].desc | lower }}`);
+</script>
+
+{% endif %}
+{% endif %}
+</section>
+</main>
 
 {% endblock %}

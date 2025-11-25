@@ -1,23 +1,191 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<!doctype html>
-<html>
-  <head><meta charset="utf-8"><title>Login</title><link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"></head>
-  <body>
-    <h2>Login</h2>
+<style>
+
+/* GLOBAL DARK BLUE THEME */
+body {
+  background: linear-gradient(135deg, #0a1930, #0f2a4e 70%);
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+}
+
+/* Typing Animation */
+.typing-title {
+  font-size: 26px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 25px;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 3px solid #4e9cff;
+  width: 0;
+  animation: typing 2.8s steps(40) forwards, blink .7s infinite;
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 240px; }
+}
+
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+
+/* CONTAINER */
+.login-box {
+  width: 360px;
+  margin: 40px auto;
+  padding: 30px;
+  border-radius: 18px;
+
+  /* Glassy neon box */
+  background: rgba(20, 40, 70, 0.55);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 0 20px rgba(0, 180, 255, 0.4);
+
+  animation: fadeUp 0.7s ease-out;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* NEON INPUT EFFECT */
+.field {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+.field input {
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  background: transparent;
+  border: 2px solid #446a9b;
+  border-radius: 10px;
+  color: #fff;
+  outline: none;
+  transition: 0.25s;
+}
+
+.field input:focus {
+  border-color: #4dc8ff;
+  box-shadow: 0 0 8px #4dc8ff;
+}
+
+/* Floating Labels */
+.field label {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: 0.3s;
+  background: #0f2a4e;
+  padding: 0 5px;
+  color: #d0d0d0;
+  pointer-events: none;
+}
+
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label {
+  top: -8px;
+  font-size: 11px;
+  color: #4dc8ff;
+}
+
+
+/* BUTTON NEON */
+button {
+  width: 100%;
+  padding: 14px;
+  background: #1e90ff;
+  border: none;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 17px;
+  cursor: pointer;
+  transition: 0.25s;
+  box-shadow: 0 0 10px rgba(30,144,255,0.5);
+}
+
+button:hover {
+  background: #42aaff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px #42aaff;
+}
+
+
+/* Flash Message */
+.flashes {
+  list-style: none;
+  padding: 0;
+  animation: fadeUp 0.5s;
+}
+.flashes li {
+  background: rgba(255, 60, 60, 0.25);
+  padding: 12px;
+  border-left: 4px solid #ff5757;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+/* Mobile Friendly */
+@media (max-width: 420px) {
+  .login-box {
+    width: 88%;
+    padding: 25px;
+  }
+  .typing-title {
+    font-size: 22px;
+  }
+}
+
+</style>
+
+
+<div class="login-box">
+
+    <div class="typing-title">Welcome Back 👋</div>
+
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <ul class="flashes">{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>
+        <ul class="flashes">
+          {% for m in messages %}
+            <li>{{ m }}</li>
+          {% endfor %}
+        </ul>
       {% endif %}
     {% endwith %}
+
     <form method="post">
-      <label>Login: <input name="username"></label><br>
-      <label>Password: <input type="password" name="password"></label><br>
+
+      <div class="field">
+        <input name="username" placeholder=" " autocomplete="off">
+        <label>Username</label>
+      </div>
+
+      <div class="field">
+        <input type="password" name="password" placeholder=" ">
+        <label>Password</label>
+      </div>
+
       <button>Login</button>
     </form>
-    <p><a href="{{ url_for('register') }}">Register</a></p>
-  </body>
-</html>
+
+    <p style="text-align:center; margin-top:15px;">
+      <a href="{{ url_for('register') }}" style="color:#4dc8ff;">Create an Account</a>
+    </p>
+</div>
+
+<script>
+setTimeout(() => {
+  const f = document.querySelector('.flashes');
+  if (f) f.style.opacity = "0";
+}, 3000);
+</script>
 
 {% endblock %}

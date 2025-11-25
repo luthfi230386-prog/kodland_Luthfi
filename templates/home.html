@@ -1,16 +1,113 @@
 {% extends 'base.html' %}
-{% block title %}Beranda{% endblock %}
+{% block title %}Home{% endblock %}
 {% block content %}
-  <h1>Selamat datang di Quiz!</h1>
-  <form method="get" class="mb-3">
-    <label for="city">Nama kota:</label>
-    <input class="form-control" id="city" name="city" placeholder="Masukkan kota">
-    <small class="text-muted">Tabel perkiraan cuaca 3 hari akan muncul di sini jika API cuaca diintegrasikan.</small>
-  </form>
-  <div class="card">
-    <div class="card-body">
-      <h5>Informasi hari & suhu</h5>
-      <p>Contoh: Senin — Siang: 30°C, Malam: 24°C</p>
-    </div>
+
+<style>
+  /* Fade-in + slide-up */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s ease forwards;
+  }
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Neon Title */
+  .neon {
+    color: #7db9ff;
+    text-shadow: 0 0 8px #3c9aff, 0 0 14px #1f6fff, 0 0 22px #0050ff;
+    animation: neonPulse 2s infinite alternate;
+  }
+  @keyframes neonPulse {
+    from { text-shadow: 0 0 8px #3c9aff; }
+    to { text-shadow: 0 0 16px #3c9aff; }
+  }
+
+  /* Typing animation */
+  .typing {
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 3px solid #5aa3ff;
+    animation: typing 3s steps(40, end) forwards, blink 0.6s infinite;
+  }
+  @keyframes typing {
+    to { width: 100%; }
+  }
+  @keyframes blink {
+    50% { border-color: transparent; }
+  }
+
+  /* Weather table style */
+  .weather-table {
+    color: white;
+    background: rgba(0, 30, 60, 0.4);
+    border-radius: 12px;
+    padding: 15px;
+    animation: fadeUp 1s ease forwards;
+  }
+  .weather-table table {
+    width: 100%;
+    color: #aad6ff;
+  }
+  .weather-table th {
+    color: #7fbfff;
+  }
+
+  /* Mobile */
+  @media (max-width: 480px) {
+    h1.neon { font-size: 1.7rem; }
+    .typing { font-size: 0.9rem; }
+    .weather-table { padding: 10px; }
+  }
+</style>
+
+<h1 class="neon fade-in">Welcome to the Quiz!</h1>
+
+<p class="typing" style="max-width: 420px;">
+  Enter a city name to view the 3-day weather forecast (today, tomorrow, and the day after).
+</p>
+
+<form method="get" class="mb-3 fade-in" style="animation-delay: .3s;">
+  <label for="city">City name:</label>
+  <input class="form-control" id="city" name="city" placeholder="Enter city">
+</form>
+
+{% if forecast %}
+<div class="weather-table fade-in" style="animation-delay: .5s;">
+  <h4>3-Day Weather Forecast for {{ city|capitalize }}</h4>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Day Name</th>
+        <th>Daytime</th>
+        <th>Night</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in forecast %}
+      <tr>
+        <td>{{ f.date }}</td>
+        <td>{{ f.day }}</td>
+        <td>{{ f.siang }}°C</td>
+        <td>{{ f.malam }}°C</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="card fade-in" style="animation-delay: .6s;">
+  <div class="card-body">
+    <h5 class="neon">Weather Information</h5>
+    <p>
+      Enter a city name to display a table showing the forecast for today, tomorrow, and the day after —
+      including the day name, daytime temperature, and nighttime temperature.
+    </p>
   </div>
+</div>
+{% endif %}
+
 {% endblock %}

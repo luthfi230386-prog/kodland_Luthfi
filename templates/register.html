@@ -1,25 +1,186 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<!doctype html>
-<html>
-  <head><meta charset="utf-8"><title>Register</title><link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"></head>
-  <body>
-    <h2>Register</h2>
+<style>
+
+/* GLOBAL BACKGROUND */
+body {
+  background: linear-gradient(135deg, #091a33, #0e2e52 70%);
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+}
+
+/* Typing Animation Title */
+.typing-title {
+  font-size: 26px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 25px;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 3px solid #54bcff;
+  width: 0;
+  animation: typing 3s steps(40) forwards, blink .7s infinite;
+}
+
+@keyframes typing { from { width: 0; } to { width: 260px; } }
+@keyframes blink { 50% { border-color: transparent; } }
+
+/* FORM CONTAINER */
+.reg-box {
+  width: 380px;
+  margin: 40px auto;
+  padding: 30px;
+  border-radius: 18px;
+
+  background: rgba(25, 45, 75, 0.55);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 0 20px rgba(80, 170, 255, 0.4);
+
+  animation: fadeUp 0.7s ease-out;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Floating Inputs */
+.field {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+.field input {
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  background: transparent;
+  border: 2px solid #4a6d9f;
+  border-radius: 10px;
+  color: #fff;
+  outline: none;
+  transition: 0.25s;
+}
+
+.field input:focus {
+  border-color: #49caff;
+  box-shadow: 0 0 10px #49caff;
+}
+
+.field label {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #bfcbdc;
+  pointer-events: none;
+  transition: 0.3s;
+  background: #0e2e52;
+  padding: 0 6px;
+}
+
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label {
+  top: -8px;
+  font-size: 11px;
+  color: #49caff;
+}
+
+/* Neon Button */
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 5px;
+  background: #1c99ff;
+  border: none;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 17px;
+  cursor: pointer;
+  transition: 0.25s;
+  box-shadow: 0 0 12px rgba(28,153,255,0.55);
+}
+
+button:hover {
+  background: #47aeff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 18px #47aeff;
+}
+
+/* Flash Messages */
+.flashes {
+  list-style: none;
+  padding: 0;
+  animation: fadeUp 0.5s;
+}
+.flashes li {
+  background: rgba(255, 60, 60, 0.25);
+  padding: 12px;
+  border-left: 4px solid #ff5757;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+/* Mobile */
+@media (max-width: 420px) {
+  .reg-box { width: 88%; padding: 25px; }
+  .typing-title { font-size: 22px; }
+}
+
+</style>
+
+
+<div class="reg-box">
+
+    <div class="typing-title">Create Your Account ✨</div>
+
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <ul class="flashes">{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul>
+        <ul class="flashes">
+          {% for m in messages %}
+            <li>{{ m }}</li>
+          {% endfor %}
+        </ul>
       {% endif %}
     {% endwith %}
+
     <form method="post">
-      <label>Login (unique): <input name="username"></label><br>
-      <label>Display name: <input name="display"></label><br>
-      <label>Password: <input type="password" name="password"></label><br>
-      <label>Confirm password: <input type="password" name="confirm"></label><br>
+
+      <div class="field">
+        <input name="username" placeholder=" " autocomplete="off">
+        <label>Username (unique)</label>
+      </div>
+
+      <div class="field">
+        <input name="display" placeholder=" ">
+        <label>Display Name</label>
+      </div>
+
+      <div class="field">
+        <input type="password" name="password" placeholder=" ">
+        <label>Password</label>
+      </div>
+
+      <div class="field">
+        <input type="password" name="confirm" placeholder=" ">
+        <label>Confirm Password</label>
+      </div>
+
       <button>Register</button>
     </form>
-    <p><a href="{{ url_for('index') }}">Home</a></p>
-  </body>
-</html>
+
+    <p style="text-align:center; margin-top:15px;">
+      <a href="{{ url_for('index') }}" style="color:#49caff;">Back to Home</a>
+    </p>
+</div>
+
+<script>
+// Flash auto hide
+setTimeout(() => {
+  const f = document.querySelector('.flashes');
+  if (f) f.style.opacity = "0";
+}, 3000);
+</script>
 
 {% endblock %}
