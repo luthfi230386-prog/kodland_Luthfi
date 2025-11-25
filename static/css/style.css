@@ -1,0 +1,5 @@
+
+body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 0 10px;}
+header { border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 10px;}
+footer { border-top: 1px solid #ddd; margin-top: 20px; padding-top: 10px; color: #666;}
+.flashes { color: red; }

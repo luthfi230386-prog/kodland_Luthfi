@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!doctype html>
+<html>
+  <head><meta charset="utf-8"><title>Question {{ index }}/{{ total }}</title><link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"></head>
+  <body>
+    <h3>Question {{ index }} of {{ total }}</h3>
+    <form method="post" action="{{ url_for('quiz_question') }}">
+      <p>{{ q['question'] }}</p>
+      <label><input type="radio" name="choice" value="1"> {{ q['opt1'] }}</label><br>
+      <label><input type="radio" name="choice" value="2"> {{ q['opt2'] }}</label><br>
+      <label><input type="radio" name="choice" value="3"> {{ q['opt3'] }}</label><br>
+      <label><input type="radio" name="choice" value="4"> {{ q['opt4'] }}</label><br>
+      <button>Submit</button>
+    </form>
+  </body>
+</html>
+
+{% endblock %}

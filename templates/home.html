@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Beranda{% endblock %}
+{% block content %}
+  <h1>Selamat datang di Quiz!</h1>
+  <form method="get" class="mb-3">
+    <label for="city">Nama kota:</label>
+    <input class="form-control" id="city" name="city" placeholder="Masukkan kota">
+    <small class="text-muted">Tabel perkiraan cuaca 3 hari akan muncul di sini jika API cuaca diintegrasikan.</small>
+  </form>
+  <div class="card">
+    <div class="card-body">
+      <h5>Informasi hari & suhu</h5>
+      <p>Contoh: Senin — Siang: 30°C, Malam: 24°C</p>
+    </div>
+  </div>
+{% endblock %}
